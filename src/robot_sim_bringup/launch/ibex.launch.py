@@ -50,6 +50,10 @@ def generate_launch_description():
 
     world_name = LaunchConfiguration('world')
     map_name   = LaunchConfiguration('map_name')
+    
+    twist_mux_topics = PathJoinSubstitution(
+        [pkg_robot_bringup, 'config', 'twist_mux', 'twist_mux_topics.yaml'
+    ])
 
     gazebo_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(gazebo_launch_path),
@@ -107,6 +111,20 @@ def generate_launch_description():
         map_name,
         'map.yaml'
     ])
+    
+    twist_mux_node = Node(
+        package='twist_mux',
+        executable='twist_mux',
+        name='twist_mux',
+        output='screen',
+        parameters=[
+            twist_mux_topics,
+            {'use_sim_time': True},
+        ],
+        remappings=[
+            ('cmd_vel_out', '/diff_drive_base_controller/cmd_vel')
+        ]
+    )
 
     # TODO: Abstract this to a seperate package
     nav2_launch = GroupAction(actions=[
@@ -150,7 +168,7 @@ def generate_launch_description():
                 nav2_cfg('local_costmap.yaml'),
             ],
             remappings=[
-                ('cmd_vel', '/diff_drive_base_controller/cmd_vel')
+                ('cmd_vel', '/cmd_vel_nav_stamped')
             ],
         ),
 
@@ -199,5 +217,6 @@ def generate_launch_description():
         rviz_node,
         joint_state_broadcaster_spawner,
         diff_drive_base_controller_spawner,
+        twist_mux_node,
         nav2_launch,
     ])

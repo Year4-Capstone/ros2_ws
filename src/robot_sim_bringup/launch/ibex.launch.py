@@ -35,25 +35,27 @@ def generate_launch_description():
     )
 
     world_name_arg = DeclareLaunchArgument(
-        'world_name',
-        default_value='cave_world.world'
+        'world',
+        default_value='cave_world.world',
         # default_value='small_house.world'
+        description='World to load: small_house.world, cave_world.world, or empty_world.sdf'
     )
 
     map_name_arg = DeclareLaunchArgument(
         'map_name',
-        default_value='cave_world'
+        default_value='cave_world',
         # default_value='small_house'
+        description='World to load: small_house, cave_world'
     )
 
-    world_name = LaunchConfiguration('world_name')
+    world_name = LaunchConfiguration('world')
     map_name   = LaunchConfiguration('map_name')
 
     gazebo_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(gazebo_launch_path),
         launch_arguments={
             'use_sim_time': 'true',
-            'world_name': world_name,
+            'world': world_name,
         }.items()
     )
 

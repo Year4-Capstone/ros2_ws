@@ -56,7 +56,7 @@ install(
 )
 
 install(
-  DIRECTORY config launch
+  DIRECTORY config launch maps
   DESTINATION share/${PROJECT_NAME}
 )
 

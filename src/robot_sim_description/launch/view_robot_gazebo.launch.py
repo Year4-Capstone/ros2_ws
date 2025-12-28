@@ -9,10 +9,8 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
-    pkg_robot_sim_description = get_package_share_directory('robot_sim_description')    
+    pkg_robot_sim_description = get_package_share_directory('robot_sim_description')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
-        
-    gz_launch_path = PathJoinSubstitution([pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py'])
 
     # world argument    
     world_name_arg = DeclareLaunchArgument(
@@ -28,24 +26,28 @@ def generate_launch_description():
         'worlds',
         world_name
     ])
-    
-    # Get the package share directory for meshes
-    robot_sim_description_parent_path = os.path.dirname(pkg_robot_sim_description)
-    model_dir = os.path.join(pkg_robot_sim_description, 'models')
-    combined_resource_path = f"{robot_sim_description_parent_path}:{model_dir}"
-    
+
+    # Gazebo path setup
+    models_path = os.path.join(pkg_robot_sim_description, 'models') # cave_world
+    aws_models_path = os.path.join(models_path, 'aws') # small_house
+    robot_sim_description_parent_path = os.path.dirname(pkg_robot_sim_description) # URDF meshes
+
     default_paths = [
         os.path.expanduser("~/.gz/models"),
         "/usr/share/gz/models",
     ]
-
-    combined = ":".join(default_paths + [combined_resource_path])
+    combined_resource_path = ":".join(
+        default_paths + [
+            robot_sim_description_parent_path, 
+            models_path, 
+            aws_models_path])
 
     set_gz_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
-        value=combined
+        value=combined_resource_path
     )
 
+    # URDF
     urdf_path = os.path.join(get_package_share_path('robot_sim_description'), 'urdf', 'cad_urdf.urdf.xacro')
 
     robot_description = {
@@ -54,12 +56,17 @@ def generate_launch_description():
         ])
     }
 
+    # Launch Gazebo with the specified world
     gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(gz_launch_path),
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py'])
+        ),
         launch_arguments={
             'gz_args': ['-r -v 4 ', world_path]
         }.items()
     )
+
+    # Nodes
 
     robot_state_publisher_node = Node(
         package='robot_state_publisher',

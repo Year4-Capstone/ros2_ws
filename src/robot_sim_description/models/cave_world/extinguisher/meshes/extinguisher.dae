@@ -17,7 +17,7 @@
   </asset>
   <library_images>
     <image id="MapFBXASC032FBXASC0353-image" name="MapFBXASC032FBXASC0353">
-      <init_from>extinguisher_diffuse.png</init_from>
+      <init_from>../materials/textures/extinguisher_diffuse.png</init_from>
     </image>
   </library_images>
   <library_materials>

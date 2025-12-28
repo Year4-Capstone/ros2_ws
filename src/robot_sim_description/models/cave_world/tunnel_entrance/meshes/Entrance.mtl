@@ -12,5 +12,5 @@ newmtl Entrance
 	Kd 0.5882 0.5882 0.5882
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka ../../materials/textures/Entrance.png
-	map_Kd ../../materials/textures/Entrance.png
+	map_Ka ../materials/textures/Entrance.png
+	map_Kd ../materials/textures/Entrance.png

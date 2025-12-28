@@ -11,7 +11,7 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
-    pkg_robot_description = FindPackageShare('robot_sim_description')
+    pkg_robot_description = FindPackageShare('robot_description')
     pkg_robot_bringup = FindPackageShare('robot_sim_bringup')
 
     def nav2_cfg(name):

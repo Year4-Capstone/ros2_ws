@@ -9,7 +9,7 @@ from launch_ros.actions import SetRemap
 
 
 def generate_launch_description():
-    pkg_robot_description = FindPackageShare('robot_sim_description')
+    pkg_robot_description = FindPackageShare('robot_description')
     pkg_robot_bringup = FindPackageShare('robot_sim_bringup')
 
     controller_config_file = PathJoinSubstitution(

@@ -4,7 +4,7 @@
     <!-- ========================================= -->
     <!-- MATERIALS                                 -->
     <!-- ========================================= -->
-    
+
     <material name="black">
         <color rgba="0.0 0.0 0.0 1.0" />
     </material>
@@ -16,9 +16,9 @@
     <!-- ========================================= -->
     <!-- PROPERTIES AND PARAMETERS                 -->
     <!-- ========================================= -->
-    
+
     <!-- Mesh File Paths -->
-    <xacro:property name="base_file_path"           value="package://robot_sim_description/meshes/" />
+    <xacro:property name="base_file_path"           value="package://robot_description/meshes/" />
     <xacro:property name="mesh_base_link"           value="${base_file_path}base_link.stl" />
     <xacro:property name="mesh_front_left_wheel"    value="${base_file_path}wheel_front_left.stl" />
     <xacro:property name="mesh_front_right_wheel"   value="${base_file_path}wheel_front_right.stl" />
@@ -68,7 +68,7 @@
                          iyy="${wheel_iyy}" iyz="0.0" 
                          izz="${wheel_izz}" />
             </inertial>
-            
+
             <visual>
                 <origin xyz="0 0 0" rpy="${pi / 2.0} 0 0" /> 
                 <geometry>
@@ -76,7 +76,7 @@
                 </geometry>
                 <material name="black" />
             </visual>
-            
+
             <collision>
                 <origin xyz="0 0 0" rpy="${pi / 2.0} 0 0" /> 
                 <geometry>
@@ -107,7 +107,7 @@
                 <inertia ixx="${inertial_ixx}" iyy="${inertial_iyy}" izz="${inertial_izz}" 
                          ixy="${inertial_ixy}" iyz="${inertial_iyz}" ixz="${inertial_ixz}"/>
             </inertial>
-            
+
             <visual>
                 <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
                 <geometry>
@@ -116,7 +116,7 @@
                 <material name="silver"/>
             </visual>
         </link>
-        
+
         <joint name="${name}_flipper_joint" type="fixed">
             <parent link="base_link"/>
             <child link="${name}"/>
@@ -137,7 +137,7 @@
             <inertia ixx="${chassis_ixx}" iyy="${chassis_iyy}" izz="${chassis_izz}" 
                      ixy="0" iyz="0" ixz="0"/>
         </inertial>
-        
+
         <visual>
             <origin xyz="0 0 0" rpy="${mesh_rpy}"/>
             <geometry>
@@ -145,7 +145,7 @@
             </geometry>
             <material name="silver"/>
         </visual>
-        
+
         <collision>
             <origin xyz="0 0 ${chassis_height / 2.0}" rpy="${mesh_rpy}"/>
             <geometry>
@@ -163,7 +163,7 @@
     <!-- ========================================= -->
     <!-- SENSORS                                   -->
     <!-- ========================================= -->
-    
+
     <!-- LiDAR Link and Joint -->
     <link name="laser_link">
         <inertial>
@@ -221,7 +221,7 @@
             </geometry>
         </collision>
     </link>
-      
+
     <joint name="imu_joint" type="fixed">
         <parent link="base_link" />
         <child link="imu_link" />
@@ -241,7 +241,7 @@
                        x_offset="${wheel_offset_x}" 
                        y_offset="${-wheel_offset_y}"
                        z_offset="${wheel_offset_z}" />
-    
+
     <xacro:wheel_macro name_prefix="rear_left" 
                        x_offset="${-wheel_offset_x}" 
                        y_offset="${wheel_offset_y}"

@@ -48,7 +48,7 @@ def generate_launch_description():
     )
 
     # URDF
-    urdf_path = os.path.join(get_package_share_path('robot_sim_description'), 'urdf', 'cad_urdf.urdf.xacro')
+    urdf_path = os.path.join(get_package_share_path('robot_sim_description'), 'urdf', 'ibex.urdf.xacro')
 
     robot_description = {
         'robot_description': Command([
@@ -71,7 +71,10 @@ def generate_launch_description():
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[robot_description],
+        parameters=[
+            robot_description,
+            {'use_sim_time': True}
+        ],
         output='screen'
     )
 
@@ -83,6 +86,7 @@ def generate_launch_description():
             '-topic', 'robot_description',
             '-x', '0', '-y', '0', '-z', '0.5'
         ],
+        parameters=[{'use_sim_time': True}],
         output='screen'
     )
 
@@ -94,6 +98,7 @@ def generate_launch_description():
             '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
             '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'
         ],
+        parameters=[{'use_sim_time': True}],
         output='screen'
     )
 

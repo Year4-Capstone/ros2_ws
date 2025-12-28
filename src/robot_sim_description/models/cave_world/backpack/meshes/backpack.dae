@@ -16,7 +16,7 @@
     <up_axis>Z_UP</up_axis>
   </asset>
   <library_images>
-    <image id="Backpack_ncl1_2-image" name="Backpack_ncl1_2"><init_from>backpack_diffuse.png</init_from></image>
+    <image id="Backpack_ncl1_2-image" name="Backpack_ncl1_2"><init_from>../materials/textures/backpack_diffuse.png</init_from></image>
   </library_images>
   <library_materials>
     <material id="Backpack_ncl1_1" name="Backpack_ncl1_1">

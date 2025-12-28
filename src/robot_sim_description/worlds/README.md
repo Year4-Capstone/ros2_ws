@@ -17,3 +17,13 @@ gz sim /home/luke/Projects/capstone/search-support-robots/ros-packages/robot_sim
 
 Make permanant
 echo 'export GZ_SIM_RESOURCE_PATH=~/aws_models/models:$GZ_SIM_RESOURCE_PATH' >> ~/.bashrc
+
+## Test inside ros2_ws
+
+Test the models
+export GZ_SIM_RESOURCE_PATH=\
+~/capstone/search-support-robots/ros2_ws/src/robot_sim_description/models/aws:\
+$GZ_SIM_RESOURCE_PATH
+
+Test world in gazebo
+gz sim ~/capstone/search-support-robots/ros2_ws/src/robot_sim_description/worlds/small_house.world

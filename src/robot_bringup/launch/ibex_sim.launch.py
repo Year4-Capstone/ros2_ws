@@ -12,7 +12,7 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     pkg_robot_description = FindPackageShare('robot_description')
-    pkg_robot_bringup = FindPackageShare('robot_sim_bringup')
+    pkg_robot_bringup = FindPackageShare('robot_bringup')
 
     def nav2_cfg(name):
         return PathJoinSubstitution([
@@ -23,7 +23,7 @@ def generate_launch_description():
         ])
 
     controller_config_file = PathJoinSubstitution(
-        [pkg_robot_bringup, 'config', 'diff_drive_controller.yaml']
+        [pkg_robot_bringup, 'config', 'sim_diff_drive_controller.yaml']
     )
 
     gazebo_launch_path = PathJoinSubstitution(
@@ -99,14 +99,14 @@ def generate_launch_description():
     )
 
     gt_extractor_node = Node(
-        package='robot_sim_bringup',
+        package='robot_bringup',
         executable='gt_robot_pose.py',
         name='gt_robot_pose',
         output='screen'
     )
 
     map_yaml = PathJoinSubstitution([
-        FindPackageShare('robot_sim_bringup'),
+        FindPackageShare('robot_bringup'),
         'maps',
         map_name,
         'map.yaml'

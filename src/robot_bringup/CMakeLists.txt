@@ -56,7 +56,7 @@ install(
 )
 
 install(
-  DIRECTORY config launch
+  DIRECTORY config launch scripts maps
   DESTINATION share/${PROJECT_NAME}
 )
 
@@ -64,6 +64,7 @@ install(
   PROGRAMS
     scripts/plot_joint_velocities.py
     scripts/plot_robot_velocities.py
+    scripts/gt_robot_pose.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

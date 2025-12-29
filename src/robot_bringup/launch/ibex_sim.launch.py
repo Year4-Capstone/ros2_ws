@@ -50,7 +50,7 @@ def generate_launch_description():
 
     world_name = LaunchConfiguration('world')
     map_name   = LaunchConfiguration('map_name')
-    
+
     twist_mux_topics = PathJoinSubstitution(
         [pkg_robot_bringup, 'config', 'twist_mux', 'twist_mux_topics.yaml'
     ])
@@ -111,7 +111,19 @@ def generate_launch_description():
         map_name,
         'map.yaml'
     ])
-    
+
+    teleop_joy_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            FindPackageShare('robot_teleop'),
+            '/launch/teleop_joy_launch.py'
+        ]),
+        launch_arguments={
+            'publish_stamped': 'true',
+            'cmd_vel_topic': '/cmd_vel_gamepad_stamped',
+            'use_sim_time': 'true'
+        }.items(),
+    )
+
     twist_mux_node = Node(
         package='twist_mux',
         executable='twist_mux',
@@ -217,6 +229,7 @@ def generate_launch_description():
         rviz_node,
         joint_state_broadcaster_spawner,
         diff_drive_base_controller_spawner,
+        teleop_joy_launch,
         twist_mux_node,
         nav2_launch,
     ])

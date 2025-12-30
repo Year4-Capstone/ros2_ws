@@ -1,0 +1,27 @@
+collision_monitor:
+  ros__parameters:
+    use_sim_time: true
+    base_frame_id: "base_footprint"
+    odom_frame_id: "odom"
+    cmd_vel_in_topic: "cmd_vel_nav_stamped"
+    cmd_vel_out_topic: "cmd_vel_nav_safe"
+    enable_stamped_cmd_vel: true
+    state_topic: "collision_monitor_state"
+    transform_tolerance: 0.5
+    source_timeout: 5.0
+    base_shift_correction: true
+    stop_pub_timeout: 2.0
+    polygons: ["stop_zone"]
+    observation_sources: ["scan"]
+    
+    stop_zone:
+      type: "polygon"
+      action_type: "stop"
+      min_points: 4
+      visualize: true
+      enabled: true
+      points: "[[0.8, 0.5], [0.8, -0.5], [-0.3, -0.5], [-0.3, 0.5]]"
+
+    scan:
+      type: "scan"
+      topic: "/scan"

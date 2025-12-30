@@ -180,7 +180,7 @@ def generate_launch_description():
                 nav2_cfg('local_costmap.yaml'),
             ],
             remappings=[
-                ('cmd_vel', '/cmd_vel_nav_stamped')
+                ('cmd_vel', 'cmd_vel_nav_stamped')
             ],
         ),
 
@@ -201,6 +201,14 @@ def generate_launch_description():
         ),
 
         Node(
+            package='nav2_collision_monitor',
+            executable='collision_monitor',
+            name='collision_monitor',
+            output='screen',
+            parameters=[nav2_cfg('collision_monitor.yaml')],
+        ),
+
+        Node(
             package='nav2_lifecycle_manager',
             executable='lifecycle_manager',
             name='lifecycle_manager_navigation',
@@ -215,6 +223,7 @@ def generate_launch_description():
                     'controller_server',
                     'behavior_server',
                     'bt_navigator',
+                    'collision_monitor',
                 ],
             }],
         ),

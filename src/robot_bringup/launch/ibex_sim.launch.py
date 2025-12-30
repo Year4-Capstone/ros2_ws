@@ -200,13 +200,13 @@ def generate_launch_description():
             parameters=[nav2_cfg('bt_navigator.yaml')],
         ),
 
-        Node(
-            package='nav2_collision_monitor',
-            executable='collision_monitor',
-            name='collision_monitor',
-            output='screen',
-            parameters=[nav2_cfg('collision_monitor.yaml')],
-        ),
+        # Node(
+        #     package='nav2_collision_monitor',
+        #     executable='collision_monitor',
+        #     name='collision_monitor',
+        #     output='screen',
+        #     parameters=[nav2_cfg('collision_monitor.yaml')],
+        # ),
 
         Node(
             package='nav2_lifecycle_manager',
@@ -223,7 +223,7 @@ def generate_launch_description():
                     'controller_server',
                     'behavior_server',
                     'bt_navigator',
-                    'collision_monitor',
+                    # 'collision_monitor',
                 ],
             }],
         ),

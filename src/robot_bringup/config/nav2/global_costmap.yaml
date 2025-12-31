@@ -1,7 +1,7 @@
 global_costmap:
   global_costmap:
     ros__parameters:
-      use_sim_time: true
+      use_sim_time: false
       global_frame: map
       robot_base_frame: base_footprint
       robot_radius: 0.35

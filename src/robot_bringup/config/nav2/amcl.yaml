@@ -1,6 +1,6 @@
 amcl:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     scan_topic: scan
     # initial_pose: # TODO: Not sure this did anything - investigate
     #   x: 0.0

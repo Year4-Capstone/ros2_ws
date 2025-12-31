@@ -106,6 +106,8 @@ def generate_launch_description():
             'frame_id': 'laser',
             'angle_min': -1.570796,
             'angle_max': 1.570796,
+            'calibrate_time': False,
+            'time_offset': 0.0,
         }]
     )
 
@@ -221,7 +223,7 @@ def generate_launch_description():
             name='lifecycle_manager_navigation',
             output='screen',
             parameters=[{
-                'use_sim_time': True,
+                'use_sim_time': False,
                 'autostart': True,
                 'node_names': [
                     'map_server',

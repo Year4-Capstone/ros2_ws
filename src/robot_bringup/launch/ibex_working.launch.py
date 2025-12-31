@@ -95,6 +95,18 @@ def generate_launch_description():
         )
     )
 
+    node_urg_lidar = Node(
+        package='urg_node',
+        executable='urg_node_driver',
+        parameters=[{
+            'serial_port': '/dev/ttyACM0',
+            'serial_baud': 115200,
+            'frame_id': 'laser',
+            'angle_min': -1.570796,
+            'angle_max': 1.570796,
+        }]
+    )
+
     map_name_arg = DeclareLaunchArgument(
         'map_name',
         default_value='lukes_house'
@@ -208,6 +220,7 @@ def generate_launch_description():
     return LaunchDescription([
         map_name_arg,
         node_robot_state_publisher,
+        node_urg_lidar,
         controller_manager_node,
         rviz_node,
         delayed_diff_drive_spawner,

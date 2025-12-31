@@ -165,7 +165,7 @@
     <!-- ========================================= -->
 
     <!-- LiDAR Link and Joint -->
-    <link name="laser_link">
+    <link name="laser">
         <inertial>
             <origin xyz="-0.011945780406062 -0.000381929217680526 -0.0170649378129477" rpy="0 0 0" />
             <mass value="0.073084435549317" />
@@ -192,7 +192,7 @@
 
     <joint name="laser_joint" type="fixed">
         <parent link="base_link" />
-        <child link="laser_link" />
+        <child link="laser" />
         <origin xyz="0.45 0 0.12" rpy="0 0 0" />
     </joint>
 

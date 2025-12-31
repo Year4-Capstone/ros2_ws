@@ -9,7 +9,7 @@ Simple differential drive robot example using ros2_control and Gazebo simulation
 
 **Using rosdep (recommended):**
 ```bash
-cd ~/ros2_dev_ws
+cd ~/ros2_ws
 rosdep install --from-paths src/robot_bringup --ignore-src -r -y
 ```
 

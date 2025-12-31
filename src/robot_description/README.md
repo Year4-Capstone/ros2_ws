@@ -35,7 +35,7 @@ URDF description package for the Ibex robot platform. Provides robot visualizati
 
 **Using rosdep (recommended):**
 ```bash
-cd ~/ros2_dev_ws
+cd ~/ros2_ws
 rosdep install --from-paths src/robot_description --ignore-src -r -y
 ```
 
@@ -55,7 +55,7 @@ sudo apt install ros-jazzy-robot-state-publisher \
 ### Building the Package
 
 ```bash
-cd ~/ros2_dev_ws
+cd ~/ros2_ws
 colcon build --packages-select robot_description
 source install/setup.bash
 ```
@@ -166,7 +166,7 @@ If error messages mention missing mesh files:
 
 2. **Rebuild package:**
    ```bash
-   cd ~/ros2_dev_ws
+   cd ~/ros2_ws
    colcon build --packages-select robot_description --cmake-clean-cache
    source install/setup.bash
    ```

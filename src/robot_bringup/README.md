@@ -45,7 +45,7 @@ Hardware interface and launch package for the Ibex robot using ros2_control. Pro
 
 **Using rosdep (recommended):**
 ```bash
-cd ~/ros2_dev_ws
+cd ~/ros2_ws
 rosdep install --from-paths src/robot_bringup --ignore-src -r -y
 ```
 
@@ -59,7 +59,7 @@ View README.md for phidgets test if required
 ### Building the Package
 
 ```bash
-cd ~/ros2_dev_ws
+cd ~/ros2_ws
 colcon build --packages-select robot_teleop phidgets_test robot_description robot_bringup
 source install/setup.bash
 ```

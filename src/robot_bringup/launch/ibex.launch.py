@@ -37,6 +37,21 @@ def generate_launch_description():
         parameters=[robot_description]
     )
 
+    node_urg_lidar = Node(
+        package='urg_node',
+        executable='urg_node_driver',
+        name='urg_node',
+        output='screen',
+        parameters=[{
+            'serial_port': '/dev/ttyACM0',
+            'serial_baud': 115200,
+            'frame_id': 'laser',
+            'angle_min': -1.570796,
+            'angle_max': 1.570796,
+            'use_sim_time': False
+        }]
+    )
+
     controller_manager_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
@@ -87,6 +102,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         node_robot_state_publisher,
+        node_urg_lidar,
         controller_manager_node,
         rviz_node,
         delayed_diff_drive_spawner,

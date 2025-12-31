@@ -6,7 +6,7 @@ twist_mux:
         timeout : 0.5
         priority: 100  # Highest priority
       navigation:
-        topic   : cmd_vel_nav_stamped # cmd_vel_nav_stamped cmd_vel_nav_safe SWTICH when not using collision monitor
+        topic   : cmd_vel_nav_safe # cmd_vel_nav_stamped cmd_vel_nav_safe SWTICH when not using collision monitor
         timeout : 1.0
         priority: 10   # Lower priority
     

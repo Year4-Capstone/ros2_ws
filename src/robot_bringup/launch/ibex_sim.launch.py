@@ -18,7 +18,7 @@ def generate_launch_description():
         return PathJoinSubstitution([
             pkg_robot_bringup,
             'config',
-            'nav2',
+            'nav2-sim',
             name
         ])
 

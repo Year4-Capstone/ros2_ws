@@ -138,6 +138,22 @@ def generate_launch_description():
         ]
     )
 
+    imu_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/imu/out@sensor_msgs/msg/Imu@gz.msgs.IMU'],
+        remappings=[('/imu/out', '/imu')],
+        output='screen'
+    )
+
+    ekf_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[PathJoinSubstitution([pkg_robot_bringup, 'config', 'ekf.yaml'])],
+    )
+
     # TODO: Abstract this to a seperate package
     nav2_launch = GroupAction(actions=[
         Node(
@@ -230,6 +246,7 @@ def generate_launch_description():
     ])
 
     return LaunchDescription([
+        ekf_node,
         world_name_arg,
         map_name_arg,
         gazebo_sim,
@@ -241,4 +258,5 @@ def generate_launch_description():
         teleop_joy_launch,
         twist_mux_node,
         nav2_launch,
+        imu_bridge,
     ])

@@ -4,8 +4,10 @@ from launch.event_handlers import OnProcessStart
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.actions import DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
 
 def generate_launch_description():
     # --- Package Name ---
@@ -109,7 +111,7 @@ def generate_launch_description():
 
     map_name_arg = DeclareLaunchArgument(
         'map_name',
-        default_value='lukes_house'
+        default_value='lukes_house' # TODO: change this later to be dynamic or just be the mine
     )
 
     map_name   = LaunchConfiguration('map_name')
@@ -120,6 +122,37 @@ def generate_launch_description():
         map_name,
         'map.yaml'
     ])
+
+    teleop_joy_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            FindPackageShare('robot_teleop'),
+            '/launch/teleop_joy_launch.py'
+        ]),
+        launch_arguments={
+            'publish_stamped': 'true',
+            'cmd_vel_topic': '/cmd_vel_gamepad_stamped',
+            'use_sim_time': 'false'
+        }.items(),
+    )
+
+
+    twist_mux_topics = PathJoinSubstitution(
+        [pkg_robot_bringup, 'config', 'twist_mux', 'twist_mux_topics.yaml'
+    ])
+
+    twist_mux_node = Node(
+        package='twist_mux',
+        executable='twist_mux',
+        name='twist_mux',
+        output='screen',
+        parameters=[
+            twist_mux_topics,
+            {'use_sim_time': False},
+        ],
+        remappings=[
+            ('cmd_vel_out', '/diff_drive_base_controller/cmd_vel')
+        ]
+    )
 
     nav2_launch = GroupAction(actions=[
         Node(
@@ -225,5 +258,7 @@ def generate_launch_description():
         rviz_node,
         delayed_diff_drive_spawner,
         delayed_joint_broad_spawner,
+        teleop_joy_launch,
+        twist_mux_node,
         nav2_launch
     ])

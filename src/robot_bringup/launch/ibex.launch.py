@@ -26,7 +26,7 @@ def generate_launch_description():
     )
 
     robot_description_content = Command(
-        [FindExecutable(name='xacro'), ' ', xacro_file]
+        [FindExecutable(name='xacro'), ' ', xacro_file, ' sim_mode:=false']
     )
     robot_description = {'robot_description': robot_description_content}
 

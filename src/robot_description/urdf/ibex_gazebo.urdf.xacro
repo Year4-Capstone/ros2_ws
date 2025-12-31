@@ -1,33 +1,23 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="cad_urdf">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ibex_gazebo">
 
     <gazebo>
-    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-        <parameters>$(find robot_sim_bringup)/config/diff_drive_controller.yaml</parameters>
-    </plugin>
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>$(find robot_bringup)/config/sim_diff_drive_controller.yaml</parameters>
+        </plugin>
     </gazebo>
 
-            <gazebo>
+    <gazebo>
         <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
             <render_engine>ogre2</render_engine>
         </plugin>
     </gazebo>
-
-    <!-- <gazebo>
-        <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu">
-        </plugin>
-        <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
-            <render_engine>ogre2</render_engine>
-        </plugin>
-    </gazebo> -->
-
 
     <gazebo reference="imu_link">
         <sensor name="imu_sensor" type="imu">
             <topic>imu/out</topic>
             <always_on>true</always_on>
             <update_rate>100</update_rate>
-
             <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
         </sensor>
     </gazebo>
@@ -61,6 +51,5 @@
             </lidar>
         </sensor>
     </gazebo>
-    
 
 </robot>

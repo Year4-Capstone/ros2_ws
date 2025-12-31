@@ -9,10 +9,10 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
-    pkg_robot_sim_description = get_package_share_directory('robot_sim_description')
+    pkg_robot_description = get_package_share_directory('robot_description')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
-    # world argument    
+    # world argument
     world_name_arg = DeclareLaunchArgument(
         'world',
         default_value='empty_world.sdf',
@@ -22,15 +22,15 @@ def generate_launch_description():
 
     # Construct the path to the world file
     world_path = PathJoinSubstitution([
-        pkg_robot_sim_description,
+        pkg_robot_description,
         'worlds',
         world_name
     ])
 
     # Gazebo path setup
-    models_path = os.path.join(pkg_robot_sim_description, 'models') # cave_world
+    models_path = os.path.join(pkg_robot_description, 'models') # cave_world
     aws_models_path = os.path.join(models_path, 'aws') # small_house
-    robot_sim_description_parent_path = os.path.dirname(pkg_robot_sim_description) # URDF meshes
+    robot_description_parent_path = os.path.dirname(pkg_robot_description) # URDF meshes
 
     default_paths = [
         os.path.expanduser("~/.gz/models"),
@@ -38,7 +38,7 @@ def generate_launch_description():
     ]
     combined_resource_path = ":".join(
         default_paths + [
-            robot_sim_description_parent_path, 
+            robot_description_parent_path, 
             models_path, 
             aws_models_path])
 
@@ -48,11 +48,11 @@ def generate_launch_description():
     )
 
     # URDF
-    urdf_path = os.path.join(get_package_share_path('robot_sim_description'), 'urdf', 'cad_urdf.urdf.xacro')
+    urdf_path = os.path.join(get_package_share_path('robot_description'), 'urdf', 'ibex.urdf.xacro')
 
     robot_description = {
         'robot_description': Command([
-            'xacro ', urdf_path, ' use_gazebo:=true'
+            'xacro ', urdf_path, ' sim_mode:=true'
         ])
     }
 
@@ -71,7 +71,10 @@ def generate_launch_description():
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[robot_description],
+        parameters=[
+            robot_description,
+            {'use_sim_time': True}
+        ],
         output='screen'
     )
 
@@ -83,6 +86,7 @@ def generate_launch_description():
             '-topic', 'robot_description',
             '-x', '0', '-y', '0', '-z', '0.5'
         ],
+        parameters=[{'use_sim_time': True}],
         output='screen'
     )
 
@@ -94,6 +98,7 @@ def generate_launch_description():
             '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
             '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'
         ],
+        parameters=[{'use_sim_time': True}],
         output='screen'
     )
 

@@ -26,7 +26,7 @@ colcon build
 source install/setup.bash
 ros2 launch robot_bringup ibex.launch.py
 or
-ros2 launch robot_sim_bringup ibex.launch.py
+ros2 launch robot_bringup ibex.launch.py
 
 # For slam too
 Only on system not from launch file rn and only with odom and lidar
@@ -49,7 +49,7 @@ ros2 launch robot_bringup ibex.launch.py
 
 
 ## For sim
-colcon build --packages-select robot_sim_description robot_sim_bringup
+colcon build --packages-select robot_description robot_bringup
 
 
 Running controller in other terminal:
@@ -126,7 +126,7 @@ colcon build
 source install/setup.bash
 ros2 launch robot_bringup ibex.launch.py
 or
-ros2 launch robot_sim_bringup ibex.launch.py
+ros2 launch robot_bringup ibex.launch.py
 
 # For slam too
 Only on system not from launch file rn and only with odom and lidar
@@ -149,7 +149,7 @@ ros2 launch robot_bringup ibex.launch.py
 
 
 ## For sim
-colcon build --packages-select robot_sim_description robot_sim_bringup
+colcon build --packages-select robot_description robot_bringup
 
 
 Running controller in other terminal:

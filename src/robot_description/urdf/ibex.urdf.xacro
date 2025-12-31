@@ -1,7 +1,22 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ibex">
 
+    <!-- Argument to determine if we're in simulation -->
+    <xacro:arg name="sim_mode" default="true" />
+    <xacro:property name="sim_mode" value="$(arg sim_mode)" />
+
+    <!-- Core robot description -->
     <xacro:include filename="ibex_core.urdf.xacro" />
-    <xacro:include filename="ibex_ros2_control.urdf.xacro" /> 
-    
+
+    <!-- If sim_mode is true -->
+    <xacro:if value="${sim_mode}">
+        <xacro:include filename="ibex_gazebo.urdf.xacro" /> 
+        <xacro:include filename="ibex_sim_ros2_control.urdf.xacro" /> 
+    </xacro:if>
+
+    <!-- If sim_mode is false -->
+    <xacro:unless value="${sim_mode}">
+        <xacro:include filename="ibex_hardware_ros2_control.urdf.xacro" />
+    </xacro:unless>
+
 </robot>

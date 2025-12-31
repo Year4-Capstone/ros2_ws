@@ -61,7 +61,7 @@ TODO: Verify if the port config locations are correct, type of device is correct
 ### ROS2 Dependencies
 **Using rosdep (recommended):**
 ```bash
-cd ~/ros2_dev_ws
+cd ~/ros2_ws
 rosdep install --from-paths src/phidgets_test --ignore-src -r -y
 ```
 
@@ -103,7 +103,7 @@ Phidgets provides a graphical control application for testing and configuration:
 ### Building the Package
 
 ```bash
-cd ~/ros2_dev_ws
+cd ~/ros2_ws
 colcon build --packages-select robot_teleop phidgets_test
 source install/setup.bash
 ```

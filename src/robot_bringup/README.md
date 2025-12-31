@@ -3,7 +3,7 @@
 
 ## Overview
 
-Hardware interface and launch package for the Ibex robot using ros2_control. Provides integration between ROS2 controllers and Phidget BLDC motor controllers for differential drive operation.
+Hardware interface and launch package for the Ibex robot using ros2_control. Provides integration between ROS2 controllers and Phidget BLDC motor controllers for differential drive operation, along with simulation support, SLAM, and Nav2 navigation capabilities.
 
 ## Hardware Setup
 
@@ -32,11 +32,10 @@ Hardware interface and launch package for the Ibex robot using ros2_control. Pro
 - `robot_state_publisher` - TF broadcaster
 - `robot_description` - Robot URDF package
 - `xacro` - URDF processing
-
-### Custom Package Dependencies
-- `phidgets_test` - Phidget motor driver library
-- `robot_description` - URDF for the IBEX
-- `robot_teleop` - Converts gamepad into linear and angular velocities
+- `slam_toolbox` - SLAM implementation
+- `nav2_*` - Navigation2 stack
+- `twist_mux` - Velocity command multiplexer
+- `ros_gz_bridge` - Gazebo-ROS2 bridge
 
 
 ### System Dependencies
@@ -46,7 +45,7 @@ Hardware interface and launch package for the Ibex robot using ros2_control. Pro
 
 **Using rosdep (recommended):**
 ```bash
-cd ~/ros2_dev_ws
+cd ~/ros2_ws
 rosdep install --from-paths src/robot_bringup --ignore-src -r -y
 ```
 
@@ -60,12 +59,31 @@ View README.md for phidgets test if required
 ### Building the Package
 
 ```bash
-cd ~/ros2_dev_ws
+cd ~/ros2_ws
 colcon build --packages-select robot_teleop phidgets_test robot_description robot_bringup
 source install/setup.bash
 ```
+## Configuration Files
+### Twist Mux Configuration
 
-### Launching the Robot
+**Topics** (`config/twist_mux/twist_mux_topics.yaml`)
+- **Gamepad input:**
+  - Topic: `/cmd_vel_gamepad_stamped`
+  - Priority: 100 (highest)
+  - Timeout: 0.5 s
+- **Navigation input:**
+  - Topic: `/cmd_vel_nav_stamped`
+  - Priority: 10
+  - Timeout: 1.0 s
+- Output: `/diff_drive_base_controller/cmd_vel`
+- Uses stamped messages
+
+## Launch Files
+
+### 1. Hardware Launch (ibex.launch.py)
+
+Launch the physical robot with hardware interface.
+
 **Note:** Review README.md for the phidgets_test package, ideally motors should be homed before driving
 
 **Terminal 1:** Start joy node (requires gamepad connected)
@@ -89,7 +107,60 @@ This starts:
 - **Robot State Publisher** - Publishes TF transforms
 - **RViz2** - Visualization
 
-### Visualization Tools
+### 2. Simulation Launch (ibex_sim.launch.py)
+
+Launch the robot in Gazebo simulation with Nav2 navigation stack. This launch file includes the teleop node.
+
+```bash
+ros2 launch robot_bringup ibex_sim.launch.py
+```
+
+**Arguments:**
+- `world` - World file to load (default: `cave_world.world`)
+  - Options: `small_house.world`, `cave_world.world`, `empty_world.sdf`
+- `map_name` - Map name for navigation (default: `cave_world`)
+  - Options: `small_house`, `cave_world`
+
+**Example with custom world:**
+```bash
+ros2 launch robot_bringup ibex_sim.launch.py world:=small_house.world map_name:=small_house
+```
+
+This starts:
+- **Gazebo Simulation** - Physics simulation environment
+- **Joint State Broadcaster** - Publishes simulated joint states
+- **Diff Drive Controller** - Simulated differential drive control
+- **Twist Mux** - Multiplexes gamepad and navigation commands
+- **Nav2 Stack** - Full navigation system with:
+  - Map Server
+  - AMCL (localization)
+  - Planner Server
+  - Controller Server
+  - Behavior Server
+  - BT Navigator
+  - Lifecycle Manager
+- **Ground Truth Bridge** - Publishes GT pose from Gazebo to `/ground_truth_pose`
+- **RViz2** - Navigation visualization
+
+### 3. SLAM Launch (ibex_sim_slam.launch.py)
+
+Launch the robot in simulation with SLAM mapping.
+
+```bash
+ros2 launch robot_bringup ibex_sim_slam.launch.py
+```
+
+This starts:
+- **Gazebo Simulation** - Physics simulation environment
+- **SLAM Toolbox** - Online async SLAM
+- **Joint State Broadcaster** - Publishes simulated joint states
+- **Diff Drive Controller** - Simulated differential drive control
+- **Ground Truth Bridge** - Publishes GT pose from Gazebo
+- **RViz2** - SLAM visualization
+
+
+
+### Visualization Tools (Hardware Only)
 
 **Joint velocity tracking:**
 ```bash
@@ -123,6 +194,27 @@ ros2 topic echo /joint_states
 **Monitor odometry:**
 ```bash
 ros2 topic echo /diff_drive_base_controller/odom
+```
+**Monitor ground truth (simulation only):**
+```bash
+ros2 topic echo /ground_truth_pose
+```
+### Nav2 Status
+
+**Check navigation status:**
+```bash
+ros2 topic echo /navigate_to_pose/_action/status
+```
+
+**View costmaps:**
+```bash
+ros2 topic echo /local_costmap/costmap
+ros2 topic echo /global_costmap/costmap
+```
+
+**Monitor planned path:**
+```bash
+ros2 topic echo /plan
 ```
 
 ## Controller Configuration
@@ -181,49 +273,80 @@ The hardware interface (`hardware/diffbot_system.cpp`) provides:
 
 **TODO**
 
-## Topics and Services
+## Published Topics
 
-### Published Topics
+**Core Topics:**
+- `/joint_states` (sensor_msgs/msg/JointState) - Joint positions and velocities
+- `/diff_drive_base_controller/odom` (nav_msgs/msg/Odometry) - Robot odometry
+- `/tf` (tf2_msgs/msg/TFMessage) - Transform tree
+- `/ground_truth_pose` (geometry_msgs/msg/PoseStamped) - Ground truth from Gazebo (sim only)
 
-- `/joint_states` (sensor_msgs/msg/JointState)
-  - Current state of all joints
-  - Published by joint_state_broadcaster
+**Navigation Topics:**
+- `/map` (nav_msgs/msg/OccupancyGrid) - Global map
+- `/local_costmap/costmap` (nav_msgs/msg/OccupancyGrid) - Local costmap
+- `/global_costmap/costmap` (nav_msgs/msg/OccupancyGrid) - Global costmap
+- `/plan` (nav_msgs/msg/Path) - Planned path
 
-- `/diff_drive_base_controller/odom` (nav_msgs/msg/Odometry)
-  - Robot odometry (position and velocity)
-  - Published by diff_drive_controller
-
-- `/tf` (tf2_msgs/msg/TFMessage)
-  - Transform tree
-  - Published by robot_state_publisher and diff_drive_controller
+**SLAM Topics:**
+- `/map` (nav_msgs/msg/OccupancyGrid) - SLAM-generated map
+- `/slam_toolbox/graph_visualization` (visualization_msgs/msg/MarkerArray) - Pose graph
 
 ### Subscribed Topics
 
-- `/diff_drive_base_controller/cmd_vel` (geometry_msgs/msg/TwistStamped)
-  - Velocity commands for robot base
-  - Subscribed by diff_drive_controller
+**Control Topics:**
+- `/diff_drive_base_controller/cmd_vel` (geometry_msgs/msg/TwistStamped) - Velocity commands
+- `/cmd_vel_gamepad_stamped` (geometry_msgs/msg/TwistStamped) - Gamepad input (via twist_mux)
+- `/cmd_vel_nav_stamped` (geometry_msgs/msg/TwistStamped) - Navigation input (via twist_mux)
+
+**Sensor Topics:**
+- `/scan` (sensor_msgs/msg/LaserScan) - LiDAR data
 
 ### Services
 
 - `/controller_manager/*` - Controller lifecycle management
 - `/diff_drive_base_controller/*` - Controller-specific services
+- `/slam_toolbox/*` - SLAM services (save map, etc.)
+- Navigation action servers (navigate_to_pose, etc.)
 
 ## Package Structure
 
 ```
 robot_bringup/
 ├── config/
-│   └── diff_drive_controller.yaml    # Controller configuration
+│   ├── diff_drive_controller.yaml       # Hardware controller config
+│   ├── sim_diff_drive_controller.yaml   # Simulation controller config
+│   ├── slam_params.yaml                 # SLAM Toolbox configuration
+│   ├── nav2/                            # Nav2 configuration files
+│   │   ├── amcl.yaml
+│   │   ├── behavior_server.yaml
+│   │   ├── bt_navigator.yaml
+│   │   ├── controller_server.yaml
+│   │   ├── global_costmap.yaml
+│   │   ├── local_costmap.yaml
+│   │   ├── map_server.yaml
+│   │   └── planner_server.yaml
+│   └── twist_mux/
+│       └── twist_mux_topics.yaml        # Twist mux topic configuration
 ├── hardware/
 │   ├── include/
-│   │   └── diffbot_system.hpp        # Hardware interface header
-│   └── diffbot_system.cpp            # Hardware interface implementation
+│   │   └── diffbot_system.hpp           # Hardware interface header
+│   └── diffbot_system.cpp               # Hardware interface implementation
 ├── launch/
-│   └── ibex.launch.py                # Main launch file
+│   ├── ibex.launch.py                   # Hardware launch file
+│   ├── ibex_sim.launch.py               # Simulation + Nav2 launch file
+│   └── ibex_sim_slam.launch.py          # Simulation + SLAM launch file
+├── maps/
+│   ├── cave_world/
+│   │   ├── map.pgm
+│   │   └── map.yaml
+│   └── small_house/
+│       ├── map.pgm
+│       └── map.yaml
 ├── scripts/
-│   ├── plot_joint_velocities.py      # Joint velocity visualization
-│   └── plot_robot_velocities.py      # Robot velocity visualization
-├── ibex_control.xml                  # Plugin description
+│   ├── gt_robot_pose.py                 # Ground truth pose extractor
+│   ├── plot_joint_velocities.py         # Joint velocity visualization
+│   └── plot_robot_velocities.py         # Robot velocity visualization
+├── ibex_control.xml                     # Plugin description
 ├── CMakeLists.txt
 ├── package.xml
 └── README.md
@@ -239,4 +362,6 @@ robot_bringup/
 
 **Runtime:**
 - `robot_teleop` - Joystick control (optional)
-
+- `slam_toolbox` - SLAM mapping (for SLAM launch)
+- `nav2_*` - Navigation stack (for simulation launch)
+- `twist_mux` - Command multiplexing

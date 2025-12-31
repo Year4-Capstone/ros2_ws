@@ -14,7 +14,7 @@ This package uses the `joy` and `teleop_twist_joy` packages to enable gamepad co
 
 **Using rosdep (recommended):**
 ```bash
-cd ~/ros2_dev_ws
+cd ~/ros2_ws
 rosdep install --from-paths src/robot_teleop --ignore-src -r -y
 ```
 

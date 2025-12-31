@@ -196,7 +196,7 @@ def generate_launch_description():
                 nav2_cfg('local_costmap.yaml'),
             ],
             remappings=[
-                ('cmd_vel', 'cmd_vel_nav_stamped')
+                ('cmd_vel', '/cmd_vel_nav_stamped')
             ],
         ),
 
@@ -222,6 +222,10 @@ def generate_launch_description():
             name='collision_monitor',
             output='screen',
             parameters=[nav2_cfg('collision_monitor.yaml')],
+            remappings=[
+                ('cmd_vel_in', '/cmd_vel_nav_stamped'),
+                ('cmd_vel_out', '/cmd_vel_nav_safe')
+            ],
         ),
 
         Node(

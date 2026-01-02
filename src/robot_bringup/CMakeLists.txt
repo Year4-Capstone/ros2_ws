@@ -65,6 +65,8 @@ install(
     scripts/plot_joint_velocities.py
     scripts/plot_robot_velocities.py
     scripts/gt_robot_pose.py
+    scripts/generate_coverage_waypoints.py
+    scripts/map_diff_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

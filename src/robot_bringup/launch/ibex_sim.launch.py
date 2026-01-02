@@ -8,6 +8,8 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import SetRemap
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
+from launch.actions import TimerAction
+
 
 
 def generate_launch_description():
@@ -154,6 +156,34 @@ def generate_launch_description():
         parameters=[PathJoinSubstitution([pkg_robot_bringup, 'config', 'ekf.yaml'])],
     )
 
+    coverage_node = Node(
+        package='robot_bringup',
+        executable='generate_coverage_waypoints.py',
+        output='screen',
+        parameters=[{
+            'map_yaml': map_yaml,
+            'spacing': 0.75,
+            'use_sim_time': True,
+        }],
+    )
+
+    map_diff_node = Node(
+        package='robot_bringup',
+        executable='map_diff_node.py',
+        output='screen',
+        parameters=[{
+            'baseline_map': map_yaml,
+            'min_hits': 15,
+            'cluster_radius': 0.4,
+            'range_epsilon': 0.3,
+            'max_range': 6.5,
+            'use_sim_time': True,
+        }],
+        remappings=[
+            ('/scan', '/scan')
+        ],
+    )
+
     # TODO: Abstract this to a seperate package
     nav2_launch = GroupAction(actions=[
         Node(
@@ -229,6 +259,18 @@ def generate_launch_description():
         ),
 
         Node(
+            package='nav2_waypoint_follower',
+            executable='waypoint_follower',
+            name='waypoint_follower',
+            output='screen',
+            parameters=[{
+                'use_sim_time': True,
+                'stop_on_failure': False,
+                'loop_rate': 20,
+            }],
+        ),
+
+        Node(
             package='nav2_lifecycle_manager',
             executable='lifecycle_manager',
             name='lifecycle_manager_navigation',
@@ -244,6 +286,7 @@ def generate_launch_description():
                     'behavior_server',
                     'bt_navigator',
                     'collision_monitor',
+                    'waypoint_follower',
                 ],
             }],
         ),
@@ -259,8 +302,13 @@ def generate_launch_description():
         rviz_node,
         joint_state_broadcaster_spawner,
         diff_drive_base_controller_spawner,
-        teleop_joy_launch,
+        # teleop_joy_launch,
         twist_mux_node,
         nav2_launch,
+        TimerAction(
+            period=5.0, # seconds
+            actions=[coverage_node]
+        ),
+        map_diff_node,
         imu_bridge,
     ])

@@ -165,6 +165,7 @@ def generate_launch_description():
             'spacing': 0.75,
             'use_sim_time': True,
         }],
+        arguments=['--ros-args', '--log-level', 'info'],
     )
 
     map_diff_node = Node(
@@ -304,7 +305,10 @@ def generate_launch_description():
         diff_drive_base_controller_spawner,
         # teleop_joy_launch,
         twist_mux_node,
-        nav2_launch,
+        TimerAction(
+            period=5.0, # seconds
+            actions=[nav2_launch]
+        ),
         TimerAction(
             period=5.0, # seconds
             actions=[coverage_node]

@@ -1,9 +1,30 @@
 amcl:
   ros__parameters:
     use_sim_time: true
+
+    # Frames
+    base_frame_id: base_footprint
+    odom_frame_id: odom
+    global_frame_id: map
+
+    # Laser
     scan_topic: scan
-    # initial_pose: # TODO: Not sure this did anything - investigate
-    #   x: 0.0
-    #   y: 0.0
-    #   z: 0.0
-    #   yaw: 0.0
+    laser_frame_id: laser
+
+    # Motion model
+    robot_model_type: nav2_amcl::DifferentialMotionModel
+
+    # Particle filter
+    min_particles: 500
+    max_particles: 2000
+    resample_interval: 1
+    transform_tolerance: 0.5
+
+    # Laser model
+    laser_model_type: likelihood_field
+    laser_max_range: 12.0
+    laser_likelihood_max_dist: 2.0
+
+    # Initial pose handling
+    set_initial_pose: false
+    always_reset_initial_pose: false

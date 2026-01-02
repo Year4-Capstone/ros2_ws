@@ -38,15 +38,15 @@ def generate_launch_description():
 
     world_name_arg = DeclareLaunchArgument(
         'world',
-        default_value='cave_world.world',
-        # default_value='small_house.world'
+        # default_value='cave_world.world',
+        default_value='small_house.world',
         description='World to load: small_house.world, cave_world.world, or empty_world.sdf'
     )
 
     map_name_arg = DeclareLaunchArgument(
         'map_name',
-        default_value='cave_world',
-        # default_value='small_house'
+        # default_value='cave_world',
+        default_value='small_house',
         description='World to load: small_house, cave_world'
     )
 

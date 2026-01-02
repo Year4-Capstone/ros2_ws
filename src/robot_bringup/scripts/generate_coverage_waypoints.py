@@ -17,6 +17,7 @@ import yaml
 import numpy as np
 import os
 import time
+import math
 
 
 class CoverageWaypointGenerator(Node):
@@ -232,18 +233,25 @@ class CoverageWaypointGenerator(Node):
                 map_yaml = yaml.safe_load(f)
 
             resolution = float(map_yaml['resolution'])
-            origin = map_yaml['origin']
+            origin = map_yaml['origin']  # [ox, oy, yaw]
             image_path = map_yaml['image']
             if not os.path.isabs(image_path):
                 image_path = os.path.join(os.path.dirname(self.map_yaml), image_path)
 
+            ox = float(origin[0])
+            oy = float(origin[1])
+            yaw = float(origin[2]) if len(origin) >= 3 else 0.0
+
+            cy = math.cos(yaw)
+            sy = math.sin(yaw)
+
             self.get_logger().info(f"Map image: {image_path}")
             self.get_logger().info(f"resolution: {resolution}, origin: {origin}")
+            self.get_logger().info(f"origin yaw(rad): {yaw}")
 
             image = self.load_pgm(image_path)
 
             # PGM values: 0=black, 255=white.
-            # Your map_server treats "free_thresh" etc; here we do a simple "white-ish means free".
             free = image >= self.free_pixel_min
 
             h, w = free.shape
@@ -253,13 +261,22 @@ class CoverageWaypointGenerator(Node):
                 return
 
             self.get_logger().info(f"grid: {w}x{h}, step_px: {step}")
+            self.get_logger().info("Applying FIX: y-flip + cell-center + origin yaw rotation")
 
             count = 0
             for y in range(0, h, step):
                 for x in range(0, w, step):
                     if free[y, x]:
-                        wx = origin[0] + x * resolution
-                        wy = origin[1] + y * resolution
+                        # --- FIXED MAP->WORLD CONVERSION ---
+                        # Map origin is bottom-left of image (cell 0,0). PGM y=0 is top row -> flip y.
+                        # Use cell center (+0.5) to avoid half-cell shift.
+                        mx = (x + 0.5) * resolution
+                        my = ((h - 1 - y) + 0.5) * resolution
+
+                        # Apply map yaw about origin (origin is pose of cell (0,0) frame)
+                        wx = ox + (cy * mx - sy * my)
+                        wy = oy + (sy * mx + cy * my)
+                        # ----------------------------------
 
                         pose = PoseStamped()
                         pose.header.frame_id = 'map'
@@ -328,7 +345,6 @@ class CoverageWaypointGenerator(Node):
         if self.sent_action:
             return
 
-        # Action server already gated, but keep it safe
         if not self.follow_client.wait_for_server(timeout_sec=1.0):
             self.log_throttle('warn', 'follow_wait', "Waiting for /follow_waypoints action server (send)", 2.0)
             return

@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Map1/Topic1
         - /PoseWithCovariance1/Topic1
+        - /MarkerArray1/Topic1
       Splitter Ratio: 0.5
     Tree Height: 1067
   - Class: rviz_common/Selection
@@ -356,6 +357,18 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /stop_zone
       Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: MarkerArray
+      Namespaces:
+        coverage: true
+      Topic:
+        Depth: 5
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /coverage_waypoints
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -402,25 +415,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 11.492345809936523
+      Distance: 33.62354278564453
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 12.86658763885498
-        Y: 0.9433543682098389
-        Z: -6.5372209548950195
+        X: 6.339325904846191
+        Y: 0.626680850982666
+        Z: -5.656579971313477
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0703977346420288
+      Pitch: 1.0403977632522583
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.3553975820541382
+      Yaw: 1.280397653579712
     Saved: ~
 Window Geometry:
   Displays:
